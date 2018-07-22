@@ -21,33 +21,34 @@ final class Core extends Helpers\Singleton {
 	 */
 	protected function onConstruct() {
 
+		// Check admin area
+		if (!is_admin())
+			return;
+
 		// Factory object
 		$this->plugin->factory = new Factory($this->plugin);
 
-		/* // WP loaded hook
-		add_action('wp_loaded', [$this, 'loaded'], PHP_INT_MAX);
+		// Check AJAX request
+		if (defined('DOING_AJAX') && DOING_AJAX) {
 
-		// Print styles hook
-		add_action('wp_print_styles', [$this, 'styles'], PHP_INT_MAX); */
+			// Check this plugin prefix in action param
+			if (!empty($_POST) && is_array($_POST) && !empty($_POST['action'])) {
+
+				// Check action value
+				if ($this->plugin->prefix.'_save' == $_POST['action']) {
+
+					// Handle the ajax request
+					$this->plugin->factory->ajax()->save();
+				}
+			}
+
+		// Admin area
+		} else {
+
+			// Admin display
+			$this->plugin->factory->admin();
+		}
 	}
-
-
-
-	/**
-	 * Output parser object
-	 */
-	/* public function loaded() {
-		$this->plugin->factory->parser->start();
-	} */
-
-
-
-	/**
-	 * Handle the print styles hook
-	 */
-	/* public function styles() {
-		$this->plugin->factory->inline->transform();
-	} */
 
 
 

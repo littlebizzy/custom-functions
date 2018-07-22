@@ -4,6 +4,7 @@
 namespace LittleBizzy\CustomFunctions\Core;
 
 // Aliased namespaces
+use \LittleBizzy\CustomFunctions\Admin;
 use \LittleBizzy\CustomFunctions\Helpers;
 
 /**
@@ -17,29 +18,20 @@ class Factory extends Helpers\Factory {
 
 
 	/**
-	 * Inline object
+	 * Admin object
 	 */
-	/* protected function createInline() {
-		return Styles\Inline::instance($this->plugin);
-	} */
+	protected function createAdmin() {
+		return Admin\Admin::instance($this->plugin);
+	}
 
 
 
 	/**
-	 * Relative object
+	 * AJAX object
 	 */
-	/* protected function createRelative($base) {
-		return new Styles\Relative($base);
-	} */
-
-
-
-	/**
-	 * Parser object
-	 */
-	/* protected function createParser() {
-		return Styles\Parser::instance($this->plugin);
-	} */
+	protected function createAjax() {
+		return new Admin\AJAX($this->plugin);
+	}
 
 
 
