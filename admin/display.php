@@ -48,11 +48,27 @@ class Display {
 		wp_add_inline_script( 'wp-theme-plugin-editor', sprintf('jQuery(function($) { wp.themePluginEditor.init($("#template"), %s); })', wp_json_encode($settings)));
 		wp_add_inline_script( 'wp-theme-plugin-editor', sprintf('wp.themePluginEditor.themeOrPlugin = "plugin";'));
 
+		// Editor contents
+		$content = empty($posted_content)? @file_get_contents($real_file) : $posted_content;
+
+		// Functions documentation
+		$docs_select = '';
+		$functions = wp_doc_link_parse($content);
+		if ( !empty($functions) ) {
+			$docs_select = '<select name="docs-list" id="docs-list">';
+			$docs_select .= '<option value="">' . __( 'Function Name&hellip;' ) . '</option>';
+			foreach ( $functions as $function) {
+				$docs_select .= '<option value="' . esc_attr( $function ) . '">' . esc_html( $function ) . '()</option>';
+			}
+			$docs_select .= '</select>';
+		}
+
 		// Arguments
 		$args = [
-			'editing' => true,
-			'writable' => @is_writeable($real_file),
-			'content' => empty($posted_content)? @file_get_contents($real_file) : $posted_content,
+			'editing' 		=> true,
+			'writable' 		=> @is_writeable($real_file),
+			'content' 		=> $content,
+			'docs_select' 	=> $docs_select,
 		];
 
 		// Show data
@@ -92,6 +108,10 @@ class Display {
 					<input type="hidden" name="file" value="<?php // echo esc_attr( $file ); ?>" />
 					<input type="hidden" name="plugin" value="<?php // echo esc_attr( $plugin ); ?>" />
 				</div>
+
+				<?php if ( !empty( $docs_select ) ) : ?>
+				<div id="documentation" class="hide-if-no-js"><label for="docs-list"><?php _e('Documentation:') ?></label> <?php echo $docs_select ?> <input type="button" class="button" value="<?php esc_attr_e( 'Look Up' ) ?> " onclick="if ( '' != jQuery('#docs-list').val() ) { window.open( 'https://api.wordpress.org/core/handbook/1.0/?function=' + escape( jQuery( '#docs-list' ).val() ) + '&amp;locale=<?php echo urlencode( get_user_locale() ) ?>&amp;version=<?php echo urlencode( get_bloginfo( 'version' ) ) ?>&amp;redirect=true'); }" /></div>
+				<?php endif; ?>
 
 				<?php if ( $writable ) : ?>
 					<p class="submit">
