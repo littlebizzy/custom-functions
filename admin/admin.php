@@ -48,7 +48,13 @@ final class Admin extends Helpers\Singleton {
 	 * Admin page
 	 */
 	public function adminPage() {
-		
+
+		// Exit on unauthorized access
+		if (!current_user_can('manage_options'))
+			die;
+
+		// Shows page
+		$this->plugin->factory->display();
 	}
 
 
