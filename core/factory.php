@@ -40,7 +40,7 @@ class Factory extends Helpers\Factory {
 	 * AJAX object
 	 */
 	protected function createAjax() {
-		return new Core\AJAX($this->plugin);
+		return Core\AJAX::instance($this->plugin);
 	}
 
 
