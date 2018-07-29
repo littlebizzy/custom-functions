@@ -44,12 +44,14 @@ class Display {
 				<?php endif; ?>
 
 				<?php if ($writable) : ?>
+
 					<p class="submit">
 						<input type="button" id="custom-functions-template-button" class="button button-primary" value="<?php _e('Update File'); ?>" />
 						<span class="spinner"></span>
 					</p>
 
 				<?php else : ?>
+
 					<p><em><?php _e('You need to make this file writable before you can save your changes. See <a href="https://codex.wordpress.org/Changing_File_Permissions">the Codex</a> for more information.'); ?></em></p>
 
 				<?php endif; ?>
