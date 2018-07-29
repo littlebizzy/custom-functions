@@ -86,7 +86,6 @@ final class Admin extends Helpers\Singleton {
 
 		// Arguments
 		$args = [
-			'editing' 		=> true,
 			'writable' 		=> @is_writeable($realFile),
 			'content' 		=> $content,
 			'docs_select' 	=> $docsSelect,
