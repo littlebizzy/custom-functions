@@ -13,79 +13,10 @@ class Display {
 
 
 
-	// Properties
-	// ---------------------------------------------------------------------------------------------------
-
-
-
 	/**
-	 * Plugin object
+	 * Plugin page
 	 */
-	private $plugin;
-
-
-
-	// Initialization
-	// ---------------------------------------------------------------------------------------------------
-
-
-
-	/**
-	 * Constructor
-	 */
-	public function __construct($plugin, $postedContent) {
-
-		// Plugin object
-		$this->plugin = $plugin;
-
-		$realFile = WP_CONTENT_DIR.'/custom-functions.php';
-
-		// Enqueue editor
-		wp_enqueue_script('wp-theme-plugin-editor');
-
-		// Editor settings
-		$settings = ['codeEditor' => wp_enqueue_code_editor(['file' => $realFile])];
-		wp_add_inline_script('wp-theme-plugin-editor', sprintf('jQuery(function($) { wp.themePluginEditor.init($("#template"), %s); })', wp_json_encode($settings)));
-		wp_add_inline_script('wp-theme-plugin-editor', sprintf('wp.themePluginEditor.themeOrPlugin = "plugin";'));
-
-		// Editor contents
-		$content = (false === $postedContent)? @file_get_contents($realFile) : $postedContent;
-
-		// Functions documentation
-		$docs_select = '';
-		$functions = wp_doc_link_parse($content);
-		if ( !empty($functions) ) {
-			$docs_select = '<select name="docs-list" id="docs-list">';
-			$docs_select .= '<option value="">' . __( 'Function Name&hellip;' ) . '</option>';
-			foreach ( $functions as $function) {
-				$docs_select .= '<option value="' . esc_attr( $function ) . '">' . esc_html( $function ) . '()</option>';
-			}
-			$docs_select .= '</select>';
-		}
-
-		// Arguments
-		$args = [
-			'editing' 		=> true,
-			'writable' 		=> @is_writeable($realFile),
-			'content' 		=> $content,
-			'docs_select' 	=> $docs_select,
-		];
-
-		// Show data
-		$this->show($args);
-	}
-
-
-
-	// Internal
-	// ---------------------------------------------------------------------------------------------------
-
-
-
-	/**
-	 * Page display
-	 */
-	private function show($args) {
+	public function show($args) {
 
 		// Vars
 		extract($args);
@@ -97,25 +28,24 @@ class Display {
 
 			<h2>Editing wp-content/custom-functions.php</h2>
 
-			<form name="template" id="template" action="plugin-editor.php" method="post">
-
-				<?php //wp_nonce_field( 'edit-plugin_' . $file, 'nonce' ); ?>
+			<form name="template" id="template" class="custom-functions-template" method="post">
 
 				<div>
 					<label for="newcontent" id="theme-plugin-editor-label"><?php _e( 'Selected file content:' ); ?></label>
-					<textarea cols="70" rows="25" name="custom-functions-content" id="newcontent" aria-describedby="editor-keyboard-trap-help-1 editor-keyboard-trap-help-2 editor-keyboard-trap-help-3 editor-keyboard-trap-help-4"><?php echo $content; ?></textarea>
-					<input type="hidden" name="action" value="update" />
-					<input type="hidden" name="file" value="<?php // echo esc_attr( $file ); ?>" />
-					<input type="hidden" name="plugin" value="<?php // echo esc_attr( $plugin ); ?>" />
+					<textarea cols="70" rows="25" name="newcontent" id="newcontent" aria-describedby="editor-keyboard-trap-help-1 editor-keyboard-trap-help-2 editor-keyboard-trap-help-3 editor-keyboard-trap-help-4"><?php echo esc_textarea($content); ?></textarea>
 				</div>
 
-				<?php if ( !empty( $docs_select ) ) : ?>
-				<div id="documentation" class="hide-if-no-js"><label for="docs-list"><?php _e('Documentation:') ?></label> <?php echo $docs_select ?> <input type="button" class="button" value="<?php esc_attr_e( 'Look Up' ) ?> " onclick="if ( '' != jQuery('#docs-list').val() ) { window.open( 'https://api.wordpress.org/core/handbook/1.0/?function=' + escape( jQuery( '#docs-list' ).val() ) + '&amp;locale=<?php echo urlencode( get_user_locale() ) ?>&amp;version=<?php echo urlencode( get_bloginfo( 'version' ) ) ?>&amp;redirect=true'); }" /></div>
+				<?php if (!empty($docsSelect)) : ?>
+
+					<div id="documentation" class="hide-if-no-js"><label for="docs-list"><?php _e('Documentation:') ?></label> <?php echo $docsSelect ?>
+						<input type="button" class="button" value="<?php esc_attr_e('Look Up'); ?>" onclick="if ('' != jQuery('#docs-list').val()) { window.open( 'https://api.wordpress.org/core/handbook/1.0/?function=' + escape(jQuery('#docs-list').val()) + '&amp;locale=<?php echo urlencode(get_user_locale()) ?>&amp;version=<?php echo urlencode(get_bloginfo('version')) ?>&amp;redirect=true'); }" />
+					</div>
+
 				<?php endif; ?>
 
-				<?php if ( $writable ) : ?>
+				<?php if ($writable) : ?>
 					<p class="submit">
-						<?php submit_button( __( 'Update File' ), 'primary', 'submit', false ); ?>
+						<input type="button" id="custom-functions-template-button" class="button button-primary" value="<?php _e('Update File'); ?>" />
 						<span class="spinner"></span>
 					</p>
 
