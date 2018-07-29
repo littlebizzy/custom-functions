@@ -67,8 +67,9 @@ final class Admin extends Helpers\Singleton {
 		wp_add_inline_script('wp-theme-plugin-editor', sprintf('jQuery(function($) { wp.themePluginEditor.init($("#template"), %s); })', wp_json_encode($settings)));
 		wp_add_inline_script('wp-theme-plugin-editor', sprintf('wp.themePluginEditor.themeOrPlugin = "plugin";'));
 
-		// Custom script
-		wp_enqueue_script($this->plugin->prefix.'-admin-script', plugins_url('assets/admin.js', $this->plugin->file), ['jquery'], $this->plugin->version, true);
+		// Custom script and data
+		wp_enqueue_script($this->plugin->prefix.'-admin', plugins_url('assets/admin.js', $this->plugin->file), ['jquery'], $this->plugin->version, true);
+		wp_add_inline_script($this->plugin->prefix.'-admin', 'var '.$this->plugin->prefix.'_data = { nonce: "'.esc_attr(wp_create_nonce($this->plugin->file)).'" }');
 
 		// Editor contents
 		$content = (false === $postedContent)? @file_get_contents($realFile) : $postedContent;
