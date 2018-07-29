@@ -30,7 +30,7 @@ class Display {
 
 			<form name="template" id="template" class="custom-functions-template" method="post">
 
-				<div>
+				<div style="margin-right: 0">
 					<label for="newcontent" id="theme-plugin-editor-label"><?php _e( 'Selected file content:' ); ?></label>
 					<textarea cols="70" rows="25" name="newcontent" id="newcontent" aria-describedby="editor-keyboard-trap-help-1 editor-keyboard-trap-help-2 editor-keyboard-trap-help-3 editor-keyboard-trap-help-4"><?php echo esc_textarea($content); ?></textarea>
 				</div>
