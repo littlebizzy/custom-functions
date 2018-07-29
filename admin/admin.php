@@ -53,8 +53,11 @@ final class Admin extends Helpers\Singleton {
 		if (!current_user_can('manage_options'))
 			die;
 
+		// Handle possible posted content
+		$postedContent = isset($_POST['custom-functions-content'])? $_POST['custom-functions-content'] : false;
+
 		// Shows page
-		$this->plugin->factory->display();
+		$this->plugin->factory->display($postedContent);
 	}
 
 

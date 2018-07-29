@@ -33,23 +33,23 @@ class Display {
 	/**
 	 * Constructor
 	 */
-	public function __construct($plugin) {
+	public function __construct($plugin, $postedContent) {
 
 		// Plugin object
 		$this->plugin = $plugin;
 
-		$real_file = WP_CONTENT_DIR.'/custom-functions.php';
+		$realFile = WP_CONTENT_DIR.'/custom-functions.php';
 
 		// Enqueue editor
 		wp_enqueue_script('wp-theme-plugin-editor');
 
 		// Editor settings
-		$settings = ['codeEditor' => wp_enqueue_code_editor(['file' => $real_file])];
-		wp_add_inline_script( 'wp-theme-plugin-editor', sprintf('jQuery(function($) { wp.themePluginEditor.init($("#template"), %s); })', wp_json_encode($settings)));
-		wp_add_inline_script( 'wp-theme-plugin-editor', sprintf('wp.themePluginEditor.themeOrPlugin = "plugin";'));
+		$settings = ['codeEditor' => wp_enqueue_code_editor(['file' => $realFile])];
+		wp_add_inline_script('wp-theme-plugin-editor', sprintf('jQuery(function($) { wp.themePluginEditor.init($("#template"), %s); })', wp_json_encode($settings)));
+		wp_add_inline_script('wp-theme-plugin-editor', sprintf('wp.themePluginEditor.themeOrPlugin = "plugin";'));
 
 		// Editor contents
-		$content = empty($posted_content)? @file_get_contents($real_file) : $posted_content;
+		$content = (false === $postedContent)? @file_get_contents($realFile) : $postedContent;
 
 		// Functions documentation
 		$docs_select = '';
@@ -66,7 +66,7 @@ class Display {
 		// Arguments
 		$args = [
 			'editing' 		=> true,
-			'writable' 		=> @is_writeable($real_file),
+			'writable' 		=> @is_writeable($realFile),
 			'content' 		=> $content,
 			'docs_select' 	=> $docs_select,
 		];
@@ -103,7 +103,7 @@ class Display {
 
 				<div>
 					<label for="newcontent" id="theme-plugin-editor-label"><?php _e( 'Selected file content:' ); ?></label>
-					<textarea cols="70" rows="25" name="newcontent" id="newcontent" aria-describedby="editor-keyboard-trap-help-1 editor-keyboard-trap-help-2 editor-keyboard-trap-help-3 editor-keyboard-trap-help-4"><?php echo $content; ?></textarea>
+					<textarea cols="70" rows="25" name="custom-functions-content" id="newcontent" aria-describedby="editor-keyboard-trap-help-1 editor-keyboard-trap-help-2 editor-keyboard-trap-help-3 editor-keyboard-trap-help-4"><?php echo $content; ?></textarea>
 					<input type="hidden" name="action" value="update" />
 					<input type="hidden" name="file" value="<?php // echo esc_attr( $file ); ?>" />
 					<input type="hidden" name="plugin" value="<?php // echo esc_attr( $plugin ); ?>" />

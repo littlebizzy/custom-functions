@@ -30,8 +30,8 @@ class Factory extends Helpers\Factory {
 	/**
 	 * Display object
 	 */
-	protected function createDisplay() {
-		return new Admin\Display($this->plugin);
+	protected function createDisplay($postedContent) {
+		return new Admin\Display($this->plugin, $postedContent);
 	}
 
 
