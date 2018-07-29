@@ -38,7 +38,7 @@ final class Core extends Helpers\Singleton {
 				if ($this->plugin->prefix.'_save' == $_POST['action']) {
 
 					// Handle the ajax request
-					$this->plugin->factory->ajax()->save();
+					add_action('wp_ajax_'.$_POST['action'], [$this->plugin->factory->ajax, 'save']);
 				}
 			}
 

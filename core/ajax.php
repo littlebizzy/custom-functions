@@ -1,7 +1,7 @@
 <?php
 
 // Subpackage namespace
-namespace LittleBizzy\CustomFunctions\Admin;
+namespace LittleBizzy\CustomFunctions\Core;
 
 /**
  * AJAX class
@@ -48,6 +48,8 @@ class AJAX {
 	 * Validate code and save file
 	 */
 	public function save() {
+
+		error_log($_POST['code']);
 
 	}
 

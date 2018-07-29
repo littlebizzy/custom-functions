@@ -17,7 +17,7 @@ jQuery(document).ready(function($) {
 
 		var data = {
 			nonce: cstmfn_data['nonce'],
-			action: 'cstmfn_update',
+			action: 'cstmfn_save',
 			code: $('#newcontent').val()
 		};
 
