@@ -76,13 +76,11 @@ final class Admin extends Helpers\Singleton {
 
 		// Functions documentation
 		$docsSelect = '';
-		if ('.php' == substr($realFile, strrpos($realFile, '.'))) {
-			$functions = wp_doc_link_parse($content);
-			if (!empty($functions) && is_array($functions)) {
-				foreach ($functions as $function)
-					$docsSelect .= '<option value="'.esc_attr($function).'">'.esc_html($function).'()</option>';
-				$docsSelect = '<select name="docs-list" id="docs-list"><option value="">'.__('Function Name&hellip;').'</option>'.$docsSelect.'</select>';
-			}
+		$functions = wp_doc_link_parse($content);
+		if (!empty($functions) && is_array($functions)) {
+			foreach ($functions as $function)
+				$docsSelect .= '<option value="'.esc_attr($function).'">'.esc_html($function).'()</option>';
+			$docsSelect = '<select name="docs-list" id="docs-list"><option value="">'.__('Function Name&hellip;').'</option>'.$docsSelect.'</select>';
 		}
 
 		// Arguments
