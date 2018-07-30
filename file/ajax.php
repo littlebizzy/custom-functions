@@ -39,8 +39,10 @@ class AJAX extends Helpers\Singleton {
 			$this->error('Code content is missing');
 
 		// Check code
-		if (true !== ($result = $this->plugin->factory->code->update($_POST['code'])))
+		if (true !== ($result = $this->plugin->factory->code->update($_POST['code']))) {
+			error_log(print_r($result, true));
 			$this->error($result->get_error_message());
+		}
 
 		// Done
 		$this->output($this->response());
