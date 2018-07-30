@@ -1,7 +1,7 @@
 <?php
 
 // Subpackage namespace
-namespace LittleBizzy\CustomFunctions\Core;
+namespace LittleBizzy\CustomFunctions\File;
 
 // Aliased namespaces
 use \LittleBizzy\CustomFunctions\Helpers;
@@ -36,13 +36,11 @@ class AJAX extends Helpers\Singleton {
 
 		// Check code
 		if (!isset($_POST['code']))
-			$this->error('Code value missing');
+			$this->error('Code content is missing');
 
 		// Check code
-		// ..
-
-		// Save code
-		// ..
+		if (true !== ($message = $this->plugin->factory->code->save($_POST['code'])))
+			$this->error($message);
 
 		// Done
 		$this->output($this->response());
