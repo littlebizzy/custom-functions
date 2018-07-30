@@ -39,20 +39,20 @@ class Code {
 
 		// Previous file
 		$previousContent = @file_get_contents($this->plugin->realFile);
-error_log($content);
+
 		// Save new content
 		if (true !== ($result = $this->save($content)))
 			return $result;
-error_log('here 0');
+
 		// Invalidate OPcache
 		$this->invalidateOPcache();
 
 		// Look for errors
-		/* if (true !== ($result = $this->validate())) {
+		if (true !== ($result = $this->validate())) {
 			$this->save($previousContent);
 			$this->invalidateOPcache();
 			return $result;
-		} */
+		}
 
 		// Done
 		return true;
@@ -101,6 +101,14 @@ error_log('here 0');
 		$needle_end = "###### wp_scraping_result_end:$scrape_key ######";
 
 
+		/* Error codes */
+
+		$loopback_request_failure = [
+			'code' 		=> 'loopback_request_failed',
+			'message' 	=> __( 'Unable to communicate back with site to check for fatal errors, so the PHP change was reverted. You will need to upload your PHP file change by some other means, such as by using SFTP.' ),
+		];
+
+		$json_parse_failure = ['code' => 'json_parse_error'];
 
 
 		/* Remote requests */
@@ -114,14 +122,7 @@ error_log('here 0');
 		$body = wp_remote_retrieve_body( $r );
 		$scrape_result_position = strpos( $body, $needle_start );
 
-		$loopback_request_failure = array(
-			'code' => 'loopback_request_failed',
-			'message' => __( 'Unable to communicate back with site to check for fatal errors, so the PHP change was reverted. You will need to upload your PHP file change by some other means, such as by using SFTP.' ),
-		);
-		$json_parse_failure = array(
-			'code' => 'json_parse_error',
-		);
-
+		// Check results
 		$result = null;
 		if ( false === $scrape_result_position ) {
 			$result = $loopback_request_failure;
@@ -134,12 +135,8 @@ error_log('here 0');
 			}
 		}
 
-error_log('test 1');
-error_log(print_r($result, true));
-
 		// Try making request to homepage as well to see if visitors have been whitescreened.
 		if ( true === $result ) {
-error_log('test 2');
 			$url = home_url( '/' );
 			$url = add_query_arg( $scrape_params, $url );
 			$r = wp_remote_get( $url, compact( 'cookies', 'headers', 'timeout' ) );
@@ -158,19 +155,28 @@ error_log('test 2');
 			}
 		}
 
+
+		/* Result */
+
+		// Kill transient
 		delete_transient( $transient );
 
-		if ( true !== $result ) {
+		// Check result
+		if (true !== $result) {
 
-			if ( ! isset( $result['message'] ) ) {
+			// Check message
+			if (!isset($result['message'])) {
 				$message = __( 'Something went wrong.' );
+
+			// Extract message
 			} else {
 				$message = $result['message'];
-				unset( $result['message'] );
+				unset($result['message']);
 			}
-			return new WP_Error( 'php_error', $message, $result );
-		}
 
+			// With errors
+			return new \WP_Error('php_error', $message, $result);
+		}
 
 		// Done
 		return true;
@@ -195,12 +201,12 @@ error_log('test 2');
 
 		// Check writable file
 		if (!is_writeable($this->plugin->realFile))
-			return new WP_Error('file_not_writable', 'The file wp-content/custom-functions.php is not writable');
+			return new \WP_Error('file_not_writable', 'The file wp-content/custom-functions.php is not writable');
 
 		// Try to open the file
 		$fh = @fopen($this->plugin->realFile, 'w+');
 		if (false === $fh)
-			return new WP_Error('file_not_writable', 'Cannot open the file wp-content/custom-functions.php for writing');
+			return new \WP_Error('file_not_writable', 'Cannot open the file wp-content/custom-functions.php for writing');
 
 		// Write data
 		$written = @fwrite($fh, $content);
@@ -208,7 +214,7 @@ error_log('test 2');
 
 		// Check data
 		if (false === $written)
-			return new WP_Error('unable_to_write', 'Unable to write to the file wp-content/custom-functions.php');
+			return new \WP_Error('unable_to_write', 'Unable to write to the file wp-content/custom-functions.php');
 
 		// Done
 		return true;
