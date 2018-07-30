@@ -6,6 +6,7 @@ namespace LittleBizzy\CustomFunctions\Core;
 // Aliased namespaces
 use \LittleBizzy\CustomFunctions\Admin;
 use \LittleBizzy\CustomFunctions\Core;
+use \LittleBizzy\CustomFunctions\File;
 use \LittleBizzy\CustomFunctions\Helpers;
 
 /**
@@ -40,8 +41,17 @@ class Factory extends Helpers\Factory {
 	 * AJAX object
 	 */
 	protected function createAjax() {
-		return Core\AJAX::instance($this->plugin);
+		return File\AJAX::instance($this->plugin);
 	}
+
+
+
+	/**
+	 * Code object
+	 */
+	 protected function createCode() {
+ 		return new File\Code;
+ 	}
 
 
 
