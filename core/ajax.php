@@ -32,7 +32,7 @@ class AJAX extends Helpers\Singleton {
 
 		// Check nonce
 		if (empty($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], $this->plugin->file))
-			$this->error('Verification error, please reload page and try again');
+			$this->error('Verification error, please reload this page and try again (you can lose the changes).');
 
 		// Check code
 		if (!isset($_POST['code']))
