@@ -56,14 +56,11 @@ final class Admin extends Helpers\Singleton {
 		// Handle possible posted content
 		$postedContent = isset($_POST['custom-functions-content'])? $_POST['custom-functions-content'] : false;
 
-		// Real file
-		$realFile = WP_CONTENT_DIR.'/custom-functions.php';
-
 		// Enqueue editor
 		wp_enqueue_script('wp-theme-plugin-editor');
 
 		// Editor settings
-		$settings = ['codeEditor' => wp_enqueue_code_editor(['file' => $realFile])];
+		$settings = ['codeEditor' => wp_enqueue_code_editor(['file' => $this->plugin->realFile])];
 		wp_add_inline_script('wp-theme-plugin-editor', sprintf('jQuery(function($) { wp.themePluginEditor.init($("#template"), %s); })', wp_json_encode($settings)));
 		wp_add_inline_script('wp-theme-plugin-editor', sprintf('wp.themePluginEditor.themeOrPlugin = "plugin";'));
 
@@ -72,7 +69,7 @@ final class Admin extends Helpers\Singleton {
 		wp_add_inline_script($this->plugin->prefix.'-admin', 'var '.$this->plugin->prefix.'_data = { nonce: "'.esc_attr(wp_create_nonce($this->plugin->file)).'" }');
 
 		// Editor contents
-		$content = (false === $postedContent)? @file_get_contents($realFile) : $postedContent;
+		$content = (false === $postedContent)? @file_get_contents($this->plugin->realFile) : $postedContent;
 
 		// Functions documentation
 		$docsSelect = '';
@@ -85,7 +82,7 @@ final class Admin extends Helpers\Singleton {
 
 		// Arguments
 		$args = [
-			'writable' 		=> @is_writeable($realFile),
+			'writable' 		=> @is_writeable($this->plugin->realFile),
 			'content' 		=> $content,
 			'docs_select' 	=> $docsSelect,
 		];
