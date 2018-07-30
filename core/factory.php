@@ -50,7 +50,7 @@ class Factory extends Helpers\Factory {
 	 * Code object
 	 */
 	 protected function createCode() {
- 		return new File\Code;
+ 		return new File\Code($this->plugin);
  	}
 
 
