@@ -21,6 +21,13 @@ final class Core extends Helpers\Singleton {
 	 */
 	protected function onConstruct() {
 
+		// Set real file
+		$this->plugin->realFile = WP_CONTENT_DIR.'/custom-functions.php';
+
+		// Check file
+		if (@file_exists($this->plugin->realFile))
+			@include_once $this->plugin->realFile;
+
 		// Check admin area
 		if (!is_admin())
 			return;
