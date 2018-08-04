@@ -25,7 +25,7 @@ final class Admin extends Helpers\Singleton {
 	 * Pseudo constructor
 	 */
 	protected function onConstruct() {
-		add_action('admin_menu', [$this, 'adminMenu']);
+		add_action('admin_menu', [$this, 'menu']);
 	}
 
 
@@ -38,8 +38,8 @@ final class Admin extends Helpers\Singleton {
 	/**
 	 * Display menu
 	 */
-	public function adminMenu() {
-		add_plugins_page('Custom Functions', 'Custom Functions', 'manage_options', 'custom-functions', [$this, 'adminPage']);
+	public function menu() {
+		add_plugins_page('Custom Functions', 'Custom Functions', 'manage_options', 'custom-functions', [$this, 'page']);
 	}
 
 
@@ -47,7 +47,7 @@ final class Admin extends Helpers\Singleton {
 	/**
 	 * Admin page
 	 */
-	public function adminPage() {
+	public function page() {
 
 		// Exit on unauthorized access
 		if (!current_user_can('manage_options'))
