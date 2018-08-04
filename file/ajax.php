@@ -38,8 +38,11 @@ class AJAX extends Helpers\Singleton {
 		if (!isset($_POST['code']))
 			$this->error('Code content is missing');
 
+		// Remove back slashes
+		$code = wp_unslash($_POST['code']);
+
 		// Check code
-		if (true !== ($result = $this->plugin->factory->code->update($_POST['code']))) {
+		if (true !== ($result = $this->plugin->factory->code->update($code))) {
 			error_log(print_r($result, true));
 			$this->error($result->get_error_message());
 		}
