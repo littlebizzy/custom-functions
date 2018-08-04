@@ -14,10 +14,12 @@ jQuery(document).ready(function($) {
 		$button.closest('.submit').find('.spinner').css('visibility', 'visible');
 		$button.attr('disabled', true)
 
+		var code = wp.themePluginEditor.instance.codemirror.getValue();
+
 		var data = {
+			code: code,
 			action: 'cstmfn_save',
-			nonce: cstmfn_data['nonce'],
-			code: wp.themePluginEditor.instance.codemirror.getValue()
+			nonce: cstmfn_data['nonce']
 		};
 
 		$.post(ajaxurl + '?_=' + new Date().getTime(), data, function(e) {
