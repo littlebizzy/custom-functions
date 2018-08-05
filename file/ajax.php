@@ -43,12 +43,23 @@ class AJAX extends Helpers\Singleton {
 
 		// Check code
 		if (true !== ($result = $this->plugin->factory->code->update($code))) {
-			error_log(print_r($result, true));
-			$this->error($result->get_error_message());
+
+			// Prepare data
+			$data = array_merge([
+				'code' 		=> $result->get_error_code(),
+				'message' 	=> $result->get_error_message(),
+			], (array) $result->get_error_data());
+
+			// Send error
+			$this->error('Code execution error', $data);
 		}
 
+		// Prepare message
+		$response = $this->response();
+		$response['reason'] = __('File edited successfully.');
+
 		// Done
-		$this->output($this->response());
+		$this->output($response);
 	}
 
 
@@ -74,10 +85,16 @@ class AJAX extends Helpers\Singleton {
 	/**
 	 * Output error
 	 */
-	private function error($reason) {
-		$response = $this->response();
-		$response['status'] = 'error';
-		$response['reason'] = $reason;
+	private function error($reason, $data = []) {
+
+		// Prepare
+		$response = [
+			'status' => 'error',
+			'reason' => $reason,
+			'data'	 => $data,
+		];
+
+		// Send
 		$this->output($response);
 	}
 
