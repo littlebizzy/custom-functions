@@ -45,6 +45,8 @@ class Display {
 
 				<?php if ($writable) : ?>
 
+					<div class="editor-notices" style="margin-right: 0"></div>
+
 					<p class="submit">
 						<input type="button" id="custom-functions-template-button" class="button button-primary" value="<?php _e('Update File'); ?>" />
 						<span class="spinner"></span>
@@ -55,6 +57,8 @@ class Display {
 					<p><em><?php _e('You need to make this file writable before you can save your changes. See <a href="https://codex.wordpress.org/Changing_File_Permissions">the Codex</a> for more information.'); ?></em></p>
 
 				<?php endif; ?>
+
+				<?php wp_print_file_editor_templates(); ?>
 
 			</form>
 
