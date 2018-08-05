@@ -29,7 +29,14 @@ jQuery(document).ready(function($) {
 		$.post(ajaxurl + '?_=' + new Date().getTime(), data, function(e) {
 
 			if ('undefined' == typeof e.status) {
-				alert('Unknown error');
+
+				wp.themePluginEditor.lastSaveNoticeCode = 'unknown_error';
+				wp.themePluginEditor.addNotice({
+					code: 'unknown_error',
+					type: 'error',
+					message: 'Unknown error. Please try again after a few moments.',
+					dismissible: true
+				});
 
 			} else if ('error' == e.status) {
 
@@ -60,7 +67,14 @@ jQuery(document).ready(function($) {
 			}
 
 		}).fail(function() {
-			alert('Server communication error.' + "\n" + 'Please try again after few moments.');
+
+			wp.themePluginEditor.lastSaveNoticeCode = 'server_error';
+			wp.themePluginEditor.addNotice({
+				code: 'server_error',
+				type: 'error',
+				message: 'Server communication error. Please try again after a few moments.',
+				dismissible: true
+			});
 
 		}).always(function() {
 
