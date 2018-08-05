@@ -10,6 +10,10 @@ jQuery(document).ready(function($) {
 
 	$('#custom-functions-template-button').click(function() {
 
+		if (wp.themePluginEditor.lastSaveNoticeCode) {
+			wp.themePluginEditor.removeNotice(wp.themePluginEditor.lastSaveNoticeCode);
+		}
+
 		var $button = $(this);
 		$button.closest('.submit').find('.spinner').css('visibility', 'visible');
 		$button.attr('disabled', true)
@@ -28,16 +32,46 @@ jQuery(document).ready(function($) {
 				alert('Unknown error');
 
 			} else if ('error' == e.status) {
-				alert(e.reason);
+
+				var notice = $.extend({
+					code: 'save_error',
+					message: wp.themePluginEditor.l10n.saveError
+				}, e.data, {
+					type: 'error',
+					dismissible: true,
+					data: e.data,
+					message: e.data.message
+				});
+
+				wp.themePluginEditor.lastSaveNoticeCode = notice.code;
+				wp.themePluginEditor.addNotice( notice );
 
 			} else if ('ok' == e.status) {
-				alert('ok');
+
+				wp.themePluginEditor.lastSaveNoticeCode = 'file_saved';
+				wp.themePluginEditor.addNotice({
+					code: wp.themePluginEditor.lastSaveNoticeCode,
+					type: 'success',
+					message: e.reason,
+					dismissible: true
+				});
+
+				wp.themePluginEditor.dirty = false;
 			}
 
 		}).fail(function() {
 			alert('Server communication error.' + "\n" + 'Please try again after few moments.');
 
 		}).always(function() {
+
+			wp.themePluginEditor.spinner.removeClass('is-active');
+			wp.themePluginEditor.isSaving = false;
+
+			wp.themePluginEditor.textarea.prop( 'readonly', false );
+			if (wp.themePluginEditor.instance) {
+				wp.themePluginEditor.instance.codemirror.setOption('readOnly', false);
+			}
+
 			$button.closest('.submit').find('.spinner').css('visibility', 'hidden');
 			$button.attr('disabled', false);
 		});
