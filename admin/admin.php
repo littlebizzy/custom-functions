@@ -68,6 +68,9 @@ final class Admin extends Helpers\Singleton {
 		wp_enqueue_script($this->plugin->prefix.'-admin', plugins_url('assets/admin.js', $this->plugin->file), ['jquery'], $this->plugin->version, true);
 		wp_add_inline_script($this->plugin->prefix.'-admin', 'var '.$this->plugin->prefix.'_data = { nonce: "'.esc_attr(wp_create_nonce($this->plugin->file)).'" }');
 
+		// Styles adjustements
+		add_action('admin_footer', [$this, 'footer']);
+
 		// Editor contents
 		$content = (false === $postedContent)? @file_get_contents($this->plugin->realFile) : $postedContent;
 
@@ -89,6 +92,15 @@ final class Admin extends Helpers\Singleton {
 
 		// Shows page
 		$this->plugin->factory->display->show($args);
+	}
+
+
+
+	/**
+	 * Avoid right margins
+	 */
+	public function footer() {
+		echo '<style>.editor-notices, #template .notice { margin-right: 0; }</style>'."\n";
 	}
 
 
