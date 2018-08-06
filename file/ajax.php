@@ -27,16 +27,22 @@ class AJAX extends Helpers\Singleton {
 	public function save() {
 
 		// Check user permissions
-		if (!current_user_can('manage_options'))
-			$this->error('Current user does not have enough permissions.');
+		if (!current_user_can('manage_options')) {
+			$reason = 'Current user does not have enough permissions to edit this file.';
+			$this->error($reason, ['code' => 'user_permissions', 'message' => $reason]);
+		}
 
 		// Check nonce
-		if (empty($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], $this->plugin->file))
-			$this->error('Verification error, please reload this page and try again (you can lose the changes).');
+		if (empty($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], $this->plugin->file)) {
+			$reason = 'Nonce verification error, please reload this page and try again (you can lose the changes).';
+			$this->error($reason, ['code' => 'nonce_failure', 'message' => $reason]);
+		}
 
 		// Check code
-		if (!isset($_POST['code']))
-			$this->error('Code content is missing');
+		if (!isset($_POST['code'])) {
+			$reason = 'Code content parameter is missing';
+			$this->error($reason, ['code' => 'code_missing', 'message' => $reason]);
+		}
 
 		// Remove back slashes
 		$code = wp_unslash($_POST['code']);
