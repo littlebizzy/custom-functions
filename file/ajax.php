@@ -16,11 +16,6 @@ class AJAX extends Helpers\Singleton {
 
 
 
-	// Methods
-	// ---------------------------------------------------------------------------------------------------
-
-
-
 	/**
 	 * Validate code and save file
 	 */
@@ -70,11 +65,6 @@ class AJAX extends Helpers\Singleton {
 
 
 
-	// Internal
-	// ---------------------------------------------------------------------------------------------------
-
-
-
 	/**
 	 * Default response
 	 */
@@ -110,6 +100,11 @@ class AJAX extends Helpers\Singleton {
 	 * Output AJAX in JSON format and exit
 	 */
 	private function output($response) {
+
+		// Remove buffered content
+		@ob_end_clean();
+
+		// JSON output
 		@header('Content-Type: application/json');
 		die(@json_encode($response));
 	}
