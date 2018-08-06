@@ -21,8 +21,8 @@ final class Core extends Helpers\Singleton {
 	 */
 	protected function onConstruct() {
 		$this->init();
-		$this->load();
 		$this->context();
+		$this->load();
 	}
 
 
@@ -39,6 +39,65 @@ final class Core extends Helpers\Singleton {
 
 
 	/**
+	 * Run plugin under WP context
+	 */
+	private function context() {
+
+		// Check admin area
+		if (is_admin()) {
+
+			// Check AJAX request
+			if (defined('DOING_AJAX') && DOING_AJAX) {
+				$this->ajax();
+
+			// Admin area
+			} else {
+				$this->admin();
+			}
+		}
+	}
+
+
+
+	/**
+	 * Start the admin class
+	 */
+	private function admin() {
+
+		// Factory object
+		$this->plugin->factory = new Factory($this->plugin);
+
+		// Admin display
+		$this->plugin->factory->admin();
+	}
+
+
+
+	/**
+	 * Handle AJAX request
+	 */
+	private function ajax() {
+
+		// Check this plugin AJAX action
+		if (!empty($_POST['action']) && $this->plugin->prefix.'_save' == $_POST['action']) {
+
+			// Factory object
+			$this->plugin->factory = new Factory($this->plugin);
+
+			// Handle the ajax request
+			add_action('wp_ajax_'.$_POST['action'], [$this->plugin->factory->ajax, 'save']);
+
+			// Clean buffer
+			@ob_clean();
+
+			// Start buffering
+			@ob_start();
+		}
+	}
+
+
+
+	/**
 	 * Load custom functions file
 	 */
 	private function load() {
@@ -46,42 +105,6 @@ final class Core extends Helpers\Singleton {
 		// Check file before include it
 		if (@file_exists($this->plugin->realFile))
 			@include_once $this->plugin->realFile;
-	}
-
-
-
-	/**
-	 * Run plugin under WP context
-	 */
-	private function context() {
-
-		// Check admin area
-		if (!is_admin())
-			return;
-
-		// Set Factory object
-		$this->plugin->factory = new Factory($this->plugin);
-
-		// Check AJAX request
-		if (defined('DOING_AJAX') && DOING_AJAX) {
-
-			// Check this plugin prefix in action param
-			if (!empty($_POST) && is_array($_POST) && !empty($_POST['action'])) {
-
-				// Check action value
-				if ($this->plugin->prefix.'_save' == $_POST['action']) {
-
-					// Handle the ajax request
-					add_action('wp_ajax_'.$_POST['action'], [$this->plugin->factory->ajax, 'save']);
-				}
-			}
-
-		// Admin area
-		} else {
-
-			// Admin display
-			$this->plugin->factory->admin();
-		}
 	}
 
 
