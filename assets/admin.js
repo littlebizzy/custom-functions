@@ -51,7 +51,7 @@ jQuery(document).ready(function($) {
 				});
 
 				wp.themePluginEditor.lastSaveNoticeCode = notice.code;
-				wp.themePluginEditor.addNotice( notice );
+				wp.themePluginEditor.addNotice(notice);
 
 			} else if ('ok' == e.status) {
 
