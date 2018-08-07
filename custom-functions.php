@@ -8,6 +8,7 @@ Author: LittleBizzy
 Author URI: https://www.littlebizzy.com
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
+Prefix: CSTMFN
 */
 
 // Plugin namespace
@@ -29,7 +30,7 @@ const VERSION = '1.0.0';
 require_once dirname(FILE).'/helpers/loader.php';
 
 // Admin Notices
-Notices\Admin_Notices::instance(__FILE__);
+// Notices\Admin_Notices::instance(__FILE__);
 
 /**
  * Admin Notices Multisite check
