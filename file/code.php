@@ -201,12 +201,12 @@ class Code {
 
 		// Check writable file
 		if (!is_writeable($this->plugin->realFile))
-			return new \WP_Error('file_not_writable', 'The file wp-content/custom-functions.php is not writable');
+			return new \WP_Error('file_not_writable', 'The file wp-content/functions.php is not writable');
 
 		// Try to open the file
 		$fh = @fopen($this->plugin->realFile, 'w+');
 		if (false === $fh)
-			return new \WP_Error('file_not_writable', 'Cannot open the file wp-content/custom-functions.php for writing');
+			return new \WP_Error('file_not_writable', 'Cannot open the file wp-content/functions.php for writing');
 
 		// Write data
 		$written = @fwrite($fh, $content);
@@ -214,7 +214,7 @@ class Code {
 
 		// Check data
 		if (false === $written)
-			return new \WP_Error('unable_to_write', 'Unable to write to the file wp-content/custom-functions.php');
+			return new \WP_Error('unable_to_write', 'Unable to write to the file wp-content/functions.php');
 
 		// Done
 		return true;

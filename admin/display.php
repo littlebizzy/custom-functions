@@ -26,7 +26,7 @@ class Display {
 
 			<h1>Custom Functions</h1>
 
-			<h2>Editing wp-content/custom-functions.php</h2>
+			<h2>Editing wp-content/functions.php</h2>
 
 			<form name="template" id="template" class="custom-functions-template" method="post">
 

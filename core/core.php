@@ -33,7 +33,7 @@ final class Core extends Helpers\Singleton {
 	private function init() {
 
 		// Custom functions real file
-		$this->plugin->realFile = WP_CONTENT_DIR.'/custom-functions.php';
+		$this->plugin->realFile = WP_CONTENT_DIR.'/functions.php';
 	}
 
 
