@@ -17,6 +17,13 @@ final class Core extends Helpers\Singleton {
 
 
 	/**
+	 * Plugin AJAX request
+	 */
+	private $isAJAX = false;
+
+
+
+	/**
 	 * Pseudo-constructor
 	 */
 	protected function onConstruct() {
@@ -73,14 +80,20 @@ final class Core extends Helpers\Singleton {
 		// Check this plugin AJAX action
 		if (!empty($_POST['action']) && $this->plugin->prefix.'_save' == $_POST['action']) {
 
-			// Handle the ajax request
-			add_action('wp_ajax_'.$_POST['action'], [$this->plugin->factory->ajax, 'save']);
+			// This plugin request
+			$this->isAJAX = true;
 
-			// Clean buffer
-			@ob_clean();
+			// Destroy any previous buffer
+			$level = (int) @ob_get_level();
+			for ($i = $level; $i > 0; $i--) {
+				@ob_end_clean();
+			}
 
 			// Start buffering
 			@ob_start();
+
+			// Handle the ajax request
+			add_action('wp_ajax_'.$_POST['action'], [$this->plugin->factory->ajax, 'save']);
 		}
 	}
 
@@ -91,9 +104,17 @@ final class Core extends Helpers\Singleton {
 	 */
 	private function load() {
 
-		// Check file before include it
-		if (@file_exists($this->plugin->realFile))
-			@include_once $this->plugin->realFile;
+		// Avoid AJAX context
+		if (!$this->isAJAX) {
+
+			// Check file before include it
+			if (@file_exists($this->plugin->realFile)) {
+
+				// Use include to show a warning instead of
+				// generate a PHP fatal error and stop execution
+				@include_once $this->plugin->realFile;
+			}
+		}
 	}
 
 
