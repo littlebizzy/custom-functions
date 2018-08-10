@@ -117,8 +117,12 @@ class Code {
 		$url = admin_url('plugins.php?page=custom-functions');
 		$url = add_query_arg( $scrape_params, $url );
 
+		// Prepare args !NEW
+		$args = compact('cookies', 'headers', 'timeout');
+		$args['sslverify'] = false;
+
 		// Perform request
-		$r = wp_remote_get( $url, compact( 'cookies', 'headers', 'timeout' ) );
+		$r = wp_remote_get( $url,  $args ); // !NEW
 		$body = wp_remote_retrieve_body( $r );
 		$scrape_result_position = strpos( $body, $needle_start );
 
@@ -126,6 +130,7 @@ class Code {
 		$result = null;
 		if ( false === $scrape_result_position ) {
 			$result = $loopback_request_failure;
+			//$result['message'] .= ' - '.print_r($r, true); // Debug
 		} else {
 			$error_output = substr( $body, $scrape_result_position + strlen( $needle_start ) );
 			$error_output = substr( $error_output, 0, strpos( $error_output, $needle_end ) );
@@ -139,18 +144,20 @@ class Code {
 		if ( true === $result ) {
 			$url = home_url( '/' );
 			$url = add_query_arg( $scrape_params, $url );
-			$r = wp_remote_get( $url, compact( 'cookies', 'headers', 'timeout' ) );
+			$r = wp_remote_get( $url, $args ); // !NEW
 			$body = wp_remote_retrieve_body( $r );
 			$scrape_result_position = strpos( $body, $needle_start );
 
 			if ( false === $scrape_result_position ) {
 				$result = $loopback_request_failure;
+				//$result['message'] .= ' - '.print_r($r, true); // Debug
 			} else {
 				$error_output = substr( $body, $scrape_result_position + strlen( $needle_start ) );
 				$error_output = substr( $error_output, 0, strpos( $error_output, $needle_end ) );
 				$result = json_decode( trim( $error_output ), true );
 				if ( empty( $result ) ) {
 					$result = $json_parse_failure;
+					//$result['message'] .= ' - '.$body; // Debug
 				}
 			}
 		}
