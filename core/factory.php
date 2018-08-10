@@ -20,6 +20,15 @@ class Factory extends Helpers\Factory {
 
 
 	/**
+	 * Registrar object
+	 */
+	protected function createRegistrar() {
+		return new Helpers\Registrar($this->plugin);
+	}
+
+
+
+	/**
 	 * Admin object
 	 */
 	protected function createAdmin() {

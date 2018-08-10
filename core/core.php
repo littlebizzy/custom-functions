@@ -17,7 +17,7 @@ final class Core extends Helpers\Singleton {
 
 
 	/**
-	 * Pseudo constructor
+	 * Pseudo-constructor
 	 */
 	protected function onConstruct() {
 		$this->init();
@@ -34,6 +34,12 @@ final class Core extends Helpers\Singleton {
 
 		// Custom functions real file
 		$this->plugin->realFile = WP_CONTENT_DIR.'/functions.php';
+
+		// Factory object
+		$this->plugin->factory = new Factory($this->plugin);
+
+		// Create registrar object and set hooks handler
+		$this->plugin->factory->registrar->setHandler($this);
 	}
 
 
@@ -52,23 +58,9 @@ final class Core extends Helpers\Singleton {
 
 			// Admin area
 			} else {
-				$this->admin();
+				$this->plugin->factory->admin();
 			}
 		}
-	}
-
-
-
-	/**
-	 * Start the admin class
-	 */
-	private function admin() {
-
-		// Factory object
-		$this->plugin->factory = new Factory($this->plugin);
-
-		// Admin display
-		$this->plugin->factory->admin();
 	}
 
 
@@ -80,9 +72,6 @@ final class Core extends Helpers\Singleton {
 
 		// Check this plugin AJAX action
 		if (!empty($_POST['action']) && $this->plugin->prefix.'_save' == $_POST['action']) {
-
-			// Factory object
-			$this->plugin->factory = new Factory($this->plugin);
 
 			// Handle the ajax request
 			add_action('wp_ajax_'.$_POST['action'], [$this->plugin->factory->ajax, 'save']);
@@ -105,6 +94,18 @@ final class Core extends Helpers\Singleton {
 		// Check file before include it
 		if (@file_exists($this->plugin->realFile))
 			@include_once $this->plugin->realFile;
+	}
+
+
+
+	/**
+	 * Activation hook
+	 * Try to create wp-content/functions.php file if it does not exists
+	 */
+	public function onActivation() {
+		if (!@file_exists($this->plugin->realFile)) {
+			@file_put_contents($this->plugin->realFile, '<?php'."\n\n");
+		}
 	}
 
 
