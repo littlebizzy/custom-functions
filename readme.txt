@@ -35,11 +35,33 @@ Some custom functions plugins rely on the database, which is very unstable and d
 
 Current version edits the following file (do not edit/delete via SFTP):
 
-    `wp-content/custom-functions.php`
+    `wp-content/functions.php`
+    
+To access visit WP Admin > Plugins Submenu > Custom Functions link
     
 In the future we may have a include line at the very top of wp-config.php to prioritize loading order, as certain defined constants (etc) are better loaded prior to the mu-plugins / plugins / theme load sequence.
 
 Dev team notes (1.0.0): the plugin editor integration has been a bit complicated because to be executed outside of the plugin/theme editor it needed several adjustments in javascript, replacing event handlers, overwrite some part of the code, etc. The server side code (managed via an AJAX action) to validate the submitted code uses functions copied from the WP core instead of calling their functions because the code does not allow to change default paths and URLs (no functions params or available filters). When the code is submitted, the wp-content/custom-functions.php file is saved directly without any validation. After that, the plugin sets a WP internal status in 'scrape mode' to detect PHP fatal errors, and performs two remote calls, one to the same plugin page emulating current logged user status (same cookies and headers emitted by browsers), and one to the homepage. If any of them produces a code exception, then error info is captured and makes a roll-back to the previous custom-functions.php code.
+
+Last minute tweaks:
+
+- Create file on plugin activation starting with <?php and also two line breaks.
+
+- Changed target filename from custom-functions to functions.php
+
+- Set sslverify to false in remote requests to avoid false positives in code validation checks due certificates issues (detected on temp.littelbizzy.com)
+
+- Improved crap code removing its own plugin ajax requests via two ways:
+
+a) Attemp to remove any previous existing buffer with ob_start, but it does not work on temp.littlebizzy.com, it is possible output_buffering = off in php.ini ?
+
+b) Just if buffering fails, also it does not execute (include_once) the functions.php file from the plugin (this will not work if functions.php is included from other PHP script)
+
+Why 1.0.0 doesn't include_once in wp-config file:
+
+- WP functions does not exists yet at the wp-config.php level, so except for non-dependant functions it will generate warnings (include_once generates warnings instead of fatal errors of require_once)
+
+- Code before <?php is considered HTML, but yes it is a problem too.
 
 #### Compatibility ####
 
@@ -193,4 +215,4 @@ Please avoid leaving negative reviews in order to get a feature implemented. Ins
 * tested with PHP 7.2
 * object-oriented codebase
 * plugin uses PHP namespaces
-* creates/edits `wp-content/custom-functions.php`
+* creates/edits `wp-content/functions.php`
