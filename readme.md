@@ -13,6 +13,7 @@ Enables the ability to input custom WordPress functions such as filters in a cen
     define('DISABLE_NAG_NOTICES', true); // default = true
     
     /* Custom Functions Functions */
+    // define('CUSTOM_FUNCTIONS', true); // default = true
 
 ### Compatibility
 
